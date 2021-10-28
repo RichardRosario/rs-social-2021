@@ -1,10 +1,11 @@
 import express from "express";
 import { getPosts, createPost } from "../controllers/postsController.js";
 import { check } from "express-validator";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getPosts);
+router.route("/").get(protect, getPosts);
 router.post(
 	"/create",
 	[
@@ -24,6 +25,7 @@ router.post(
 			max: 2000
 		})
 	],
+	protect,
 	createPost
 );
 
