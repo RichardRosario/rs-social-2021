@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import { validationResult } from "express-validator";
 import User from "../models/userModel.js";
 import token from "../util/token.js";
 
@@ -6,8 +7,17 @@ import token from "../util/token.js";
 // POST, /api/users/register
 // public route
 export const createUser = asyncHandler(async (req, res) => {
-	const { name, email, password } = req.body;
+	// check for errors
+	const errors = validationResult(req);
+	// if error show the first one as they happen
+	if (!errors.isEmpty()) {
+		const error = errors.array().map(error => error.msg)[0];
+		console.log(error);
+		return res.status(400).json(error);
+	}
+	// get the field value
 	try {
+		const { name, email, password } = req.body;
 		// check if user with email exist
 		const userExist = await User.findOne({ email });
 
